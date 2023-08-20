@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
+  </head>
+  <body>
+    <main class="container pt-5">
+      <h1 class="text-center"> Password Browser </h1>
+      <div class="row justify-content-between">
+        <div class="col-lg-auto" data-bs-toggle="tooltip" data-bs-title="Scan all passwords to see if they've been compromised in a data breach">
+        <button id="healthBtn" type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#healthCheck">
+          Health Check
+        </button>
+        </div>
+        <div class="col-lg-3">
+          <input class="form-control" type="text" id="PWsearch" placeholder="Search...">
+        </div>
+        <button class="btn btn-outline-danger col-lg-auto" id="logoutBtn"> Logout </button>
+      </div>
+
+      <div id="passwords" class="pt-4"></div>
+
+      <button id="addPWbutton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPassword">
+        Add Password
+      </button>
+      <button id="DMtoggle" type="button" class="btn btn-outline-secondary float-end"></button>
+
+      <div class="modal fade" id="confirmDel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="confirmDelLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="confirmDelLabel">Confirm deletion</h1>
+              </div>
+              <div class="modal-body">
+                <h3>Are you sure?</h3>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <input type="submit" value="Confirm" class="btn btn-danger" id="confirmDelBtn" data-bs-dismiss="modal"></input>
+              </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="healthCheck" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="healthCheckLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="healthCheckLabel">Health Check</h1>
+            </div>
+            <div class="modal-body">
+              <h3 id="statement"></h3>
+              <table class="table table-striped ms-3">
+                <tbody id="healthTB">
+
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="addPassword" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="addPasswordLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+          <div class="modal-content">
+            <form id="createPW">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="addPasswordLabel">Add Password</h1>
+              </div>
+              <div class="modal-body">
+                <label for="PWname" class="form-label mt-2 mb-0"> Name </label>
+                <input type="text" id="PWname" name="PWname" class="form-control" placeholder="Website / purpose" required>
+                
+                <label for="PWuser" class="form-label mt-2 mb-0"> User </label>
+                <input type="text" id="PWuser" name="PWuser" class="form-control" placeholder="Email / username">
+                
+                <label for="PWcontent" class="form-label mt-2 mb-0"> Password </label>
+                <input type="text" id="PWcontent" name="PWcontent" class="form-control">
+
+                <meter class="mt-2" id="PWstrength"
+                min="0" max="10"
+                low="5" high="8" optimum="10"
+                value="0" style="width:100%"></meter>
+
+                <div class="form-check mt-3">
+                  <input class="form-check-input" type="checkbox" value="" id="pwSuggestEnable">
+                  <label class="form-check-label" for="pwSuggestEnable">
+                    Use password generator
+                  </label>
+                </div>
+
+                <div id="pwSuggestEl" style="display: none;">
+
+                  <div class="row pt-2 ps-4">
+                    <span class="col-auto">Length</span>
+                    <input type="range" id="len" name="len" min="3" max="50" value="10" class="col-auto form-control slider w-75">
+                    <span id="lenValue" class="col-auto">10</span>
+                  </div>
+                  
+                  <div class="row g-2 pt-2 ps-4">
+                  
+                    <div class="col-auto form-check mt-3 me-4">
+                    <label for="upper" class="form-check-label" data-bs-toggle="tooltip" data-bs-title="Should the random password generator use uppercase characters?"> Uppers</label>
+                    <input type="checkbox" id="upper" name="upper" class="form-check-input">
+                    </div>
+                    <div class="col-auto form-check mt-3 me-4"> 
+                    <label for="lower" class="form-check-label" data-bs-toggle="tooltip" data-bs-title="Should the random password generator use lowercase characters?"> Lowers</label>
+                    <input type="checkbox" id="lower" name="lower" class="form-check-input">
+                    </div>
+                    <div class="col-auto form-check mt-3"> 
+                    <label for="nums" class="form-check-label" data-bs-toggle="tooltip" data-bs-title="Should the random password generator use numbers?"> Numbers</label>
+                    <input type="checkbox" id="nums" name="nums" class="form-check-input">
+                    </div>
+                    
+                    <div class="col-auto ms-auto"> 
+                    <input type="text" id="extra" name="extra" class="col-auto form-control" placeholder="Extra..." data-bs-toggle="tooltip" data-bs-title="Add any extra characters to be included here">
+                    </div>
+                  </div>
+
+                  <div class="form-check mt-3 ms-4"> 
+                  <label for="unamb" class="form-check-label" data-bs-toggle="tooltip" data-bs-title="Remove confusing characters e.g. 1, I, 0, O"> Unambiguous</label>
+                  <input type="checkbox" id="unamb" name="unamb" class="form-check-input">
+                  </div>
+                  <button type="button" class="btn btn-outline-secondary mt-2" id="triggerPWsuggest"> Generate </button>
+                </div>
+
+                <label for="PWcategory" class="form-label mt-2 mb-0"> Category </label>
+                
+                <div class="input-group">
+                  <input type="text" id="PWcategory" name="PWcategory" class="form-control" required>
+                  <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                  <ul class="dropdown-menu dropdown-menu-end" id="categoriesDropDown">
+                  </ul>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="modalcloser">Close</button>
+                <input type="submit" value="Submit" class="btn btn-primary"></input>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </main>
+    <script>
+// Putting this here for fast loading!
+const DMtoggle = document.getElementById("DMtoggle"); // load dark mode toggle button
+function doDM() {
+    if (localStorage.getItem("dm") !== "yes") { // if we are currently in light mode
+        document.firstElementChild.setAttribute("data-bs-theme", "light");
+        DMtoggle.innerText = "Dark mode";
+        localStorage.dm = "no";
+    } else { // otherwise, we are currently in dark mode
+        document.firstElementChild.setAttribute("data-bs-theme", "dark");
+        DMtoggle.innerText = "Light mode"
+        localStorage.dm = "yes";
+    }
+}
+doDM(); // do this once to set the theme correctly at the start
+DMtoggle.onclick = () => {
+    if (localStorage.dm === "yes") { // flip over the state
+        localStorage.dm = "no"
+    } else {
+        localStorage.dm = "yes"
+    }
+    doDM();
+}
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js" integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N" crossorigin="anonymous"></script>
+    <script type="module" src="index.js"></script>
+  </body>
+</html>
